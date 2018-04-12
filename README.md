@@ -27,4 +27,22 @@ To start, we need to transfer the original data to the 1/0 matrix, and how we do
 Eventually, we will just check if the Jaccard Similarity of each candidate pairs exceed 85%. If yes, then we will detect it as duplication. 
 
 In conclusion, what will be the input and output for the mapper and reducer function in the form of (key, value) would be:
-![alt text](image/table.png "")
+![alt text](image/table1.png "")
+
+3.	Analysis 
+The working principle behind Min-hashing and Partition will be explained here. 
+(1)	Min-hashing
+Consider that we have two pages and we want to check tis Jaccard Similarity. Two pages have the following input 1/0 matrix:
+We firstly start from Jaccard Similarity, and we know that there are only fours kind of row type, which is [1,1], [1,0], [0,1] and [0,0]. Label their number of occurrence as a, b, c, and d respectively. Then we can get Sim(page1,page2)=a/(a+b+c)=|page1∩page2|/|page1∪page2| Consider stepping through the 1/0 matrix through in the order of random permutation π. We stop when encounter a “1” in either column. Since “page1 and page2 are hashed into same bucket” is equal to “type of row is [1,1]”, we can get that P(page 1 amd page 2 are in the same bucket)=a/(a+b+c) Eventually, we will get P_π (h_π (page1)=h_π (page12))= Sim(page1,page2)
+(2)	Partition
+Signature Matrix M partitioned into b bands of r rows. Suppose columns C1 and C2 have similarity . Each column Ci is partitioned into [Bi,1,…,Bi,b] where Bi,j is of length r. For one band α, 
+![alt text](image/formula1.png "")
+This formula will have graph in S curve shape, which means that if we have multiple hash funcs, we can boost the gap between similar and non-similar pairs. The example is shown below:
+![alt text](image/graph1.png "")
+This is the key insight why we can reduce the false negative and false positive
+4.	Result
+
+Based on the reference:
+![alt text](image/graph2.png "")
+We choose r=20 and b=500 as we prefer few false negatives and more false positives. If we miss false negative, it means that we lost data. While having more false positives only cause more work. Also, for the big prime number we choose 105667, and eventually we get the public score 1.0 within running time 34 secs.
+![alt text](image/result.png "")
